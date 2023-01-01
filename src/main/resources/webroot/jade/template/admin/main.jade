@@ -1,0 +1,7 @@
+extends ../layout.jade
+
+block content-body
+	h2 hello
+	.col-md-3
+		form.form-signin(action='/api/logout',method='post',enctype='multipart/form-data')
+			button.btn.btn-primary.btn-block(type='submit',style='width:100%') Logout

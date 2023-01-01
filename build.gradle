@@ -1,0 +1,32 @@
+buildscript {
+    ext {
+        version_vertx = '3.7.1'
+        version_msal4j = '1.13.3'
+    }
+}
+
+plugins {
+    id 'java'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'io.vertx', name: 'vertx-core', version: "$version_vertx"
+    implementation group: 'io.vertx', name: 'vertx-web', version: "$version_vertx"
+    implementation group: 'io.vertx', name: 'vertx-web-templ-jade', version: "$version_vertx"
+    implementation group: 'io.vertx', name: 'vertx-auth-oauth2', version: "$version_vertx"
+    implementation group: 'com.microsoft.azure', name: 'msal4j', version: "$version_msal4j"
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+}
+
+test {
+    useJUnitPlatform()
+}
