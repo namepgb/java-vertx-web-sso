@@ -15,16 +15,26 @@
 <ul>
   <li>클라이언트 ID</li>
   <li>테넌트 ID</li>
-  <li>키 값</li>
-  <li>비밀 ID</li>
+  <li>클라이언트 키</li>
+  <li>클라이언트 시크릿</li>
   <li>웹 리디렉션 URL</li>
 </ul>
 <h2>
-  Sample code overview
+  Sample overview
 </h2>
 <p>
   build.gradle에서 다음 의존성을 포함합니다.
 </p>
+
+```gradle
+dependencies {
+    implementation group: 'io.vertx', name: 'vertx-core', version: "$version_vertx"
+    implementation group: 'io.vertx', name: 'vertx-web', version: "$version_vertx"
+    implementation group: 'io.vertx', name: 'vertx-web-templ-jade', version: "$version_vertx"
+    implementation group: 'io.vertx', name: 'vertx-auth-oauth2', version: "$version_vertx"
+    implementation group: 'com.microsoft.azure', name: 'msal4j', version: "$version_msal4j"
+}
+```
 
 |구분|버전|비고|
 |---|---|---|
@@ -39,7 +49,7 @@
 </p>
 
 |경로|패키지(리소스) 경로|파일|비고|
-|---|----------------|---|---|
+|---|-----------|-----|-------------|
 |src/main/java|com.example.vertx.verticle.web|WebServerVerticle|웹 서버를 실행하는 버티클|
 |src/main/java|com.example.vertx.verticle.web.auth|AdminAzureADLoginCallbackHandler|웹 서버에서 Azure AD 기반의 SSO 로그인 콜백 결과를 처리하는 핸들러|
 |src/main/java|com.example.vertx.verticle.web.auth|AdminAzureADLoginHandler|웹 서버에서 Azure AD 기반의 SSO 로그인 요청을 처리하는 핸들러|
@@ -51,3 +61,40 @@
 |src/main/resources|/webroot/jade/template/admin|main.jade|로그인에 성공하면 리다이렉션 되는 페이지|
 |src/main/resources|/|config.xml|애플리케이션 환경 설정|
 
+<h2>
+  Run sample
+</h2>
+<p>
+  src/main/resources/config.xml의 내용을 다음과 같이 입력합니다.
+<p>
+</p>
+
+```xml
+<?xml version="1.0"?>
+<web>
+    <port>8080</port>
+    <logActivity>true</logActivity>
+    <adminUserName>admin</adminUserName>
+    <adminPassword>admin</adminPassword>
+    <sessionTimeout>60000</sessionTimeout>
+    <auzureADClientID>[클라이언트 ID]</auzureADClientID>
+    <auzureADTenantID>[테넌트 ID]</auzureADTenantID>
+    <auzureADClientKey>[클라이언트 키]</auzureADClientKey>
+    <auzureADClientSecret>[클라이언트 시크릿]</auzureADClientSecret>
+    <auzureADLoginRedirectURL>http://localhost:8080/api/login/azuread/callback</auzureADLoginRedirectURL>
+</web>
+```
+
+<p>
+  다음과 같이 Run configuration을 입력 후 소스 코드를 실행합니다.
+</p>
+
+|구분|값|
+|---|---|
+|VM options|-Dvertx.disableFileCaching=true -Dvertx.web.disableTemplCaching=true|
+|Main class|io.vertx.core.Launcher|
+|Program arugments|run com.example.vertx.verticle.launcher.Launcher|
+
+<p>
+  실행을 확인하려면 웹 브라우저에서 <a href="http://localhost:8080/admin/login">http://localhost:8080/admin/login</a>에 연결합니다.
+</p>
