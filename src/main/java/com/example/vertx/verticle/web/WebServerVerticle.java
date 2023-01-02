@@ -85,20 +85,6 @@ public class WebServerVerticle extends WrappedAbstractVerticle
 			this.router.route("/api/login/azuread").handler(new AdminAzureADLoginHandler(WebServerVerticle.this));
 			this.router.route("/api/login/azuread/callback").handler(new AdminAzureADLoginCallbackHandler(WebServerVerticle.this));
 			this.router.route("/api/logout").handler(new HandleLogout());
-//			this.router.route().handler(ctx -> {
-//				this.session_handler.handle(ctx);
-//				User user = ctx.user();
-//				if (null == user) {
-//					System.out.println("user is null");
-//				} else {
-//					JsonObject principal = ctx.user().principal();
-//					if (null != principal) {
-//						System.out.println("principal : " + principal.encodePrettily());
-//					} else {
-//						System.out.println("principal is null");
-//					}
-//				}
-//			});
 			this.router.route("/admin/login").handler(new HandleJadePage());
 			this.router.route("/admin/*").handler(RedirectAuthHandler.create(this.auth_provider, "/admin/login", "return_url"));
 			this.router.route("/admin/*").handler(new HandleJadePage());
