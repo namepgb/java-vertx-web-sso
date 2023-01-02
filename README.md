@@ -98,3 +98,6 @@ dependencies {
 <p>
   실행을 확인하려면 웹 브라우저에서 <a href="http://localhost:8080/admin/login">http://localhost:8080/admin/login</a>에 연결합니다.
 </p>
+
+<img width="1425" alt="webpage" src="https://user-images.githubusercontent.com/121745354/210195719-fdb46964-0788-4c90-9835-1ae0573ca9cb.png">
+
