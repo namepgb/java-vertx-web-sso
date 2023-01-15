@@ -115,7 +115,7 @@ public class AdminGoogleTOTPAuthenticator {
                               byte[] message)
     {
         try {
-            // MmacSHA1 알고리즘을 구현하는 Mac 객체를 작성
+            // HmacSHA1 알고리즘을 구현하는 Mac 객체를 작성
             Mac mac;
             try {
                 mac = Mac.getInstance("HmacSHA1");
