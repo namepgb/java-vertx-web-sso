@@ -36,8 +36,6 @@ public class LauncherConfig
 		public String auzureADClientKey;
 		public String auzureADClientSecret;
 		public String auzureADLoginRedirectURL;
-		public Long TOTPT0;
-		public Long TOTPX;
 		public Long TOTPTimeStep;
 		public Integer TOTPMovingFactorOffset;
 		
@@ -81,14 +79,6 @@ public class LauncherConfig
 		 * Azure AD 로그인 콜백 URL
 		 */
 		public static String getAuzureADLoginRedirectURL() { return CONFIG.web.auzureADLoginRedirectURL; }
-		/**
-		 *
-		 */
-		public static Long getTOTPT0() { return CONFIG.web.TOTPT0; }
-		/**
-		 *
-		 */
-		public static Long getTOTPX() { return CONFIG.web.TOTPX; }
 		/**
 		 * TOTP 갱신 시간 간격(단위:Ticks, 디폴트:30초=3000L*10L)
 		 */
