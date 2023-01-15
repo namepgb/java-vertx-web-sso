@@ -41,10 +41,8 @@ public class AdminGoogleTOTPAuthProvider implements AuthProvider
         for (String TOTP : TOTPs) {
             boolean hit = (0 == secret.compareTo(TOTP));
             System.out.println(String.format("TOTP income(%s) calc(%s) hit(%b)", secret, TOTP, hit));
-            if (hit) {
+            if (hit)
                 verifiedOTP = true;
-                break;
-            }
         }
 
         // TOTP 인증 실패
