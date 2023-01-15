@@ -3,10 +3,7 @@ package com.example.vertx.verticle.web;
 import com.example.vertx.verticle.launcher.LauncherConfig;
 import com.example.vertx.verticle.logger.Logger;
 import com.example.vertx.verticle.WrappedAbstractVerticle;
-import com.example.vertx.verticle.web.auth.AdminFormLoginAuthProvider;
-import com.example.vertx.verticle.web.auth.AdminAzureADLoginCallbackHandler;
-import com.example.vertx.verticle.web.auth.AdminAzureADLoginHandler;
-import com.example.vertx.verticle.web.auth.AdminFormLoginHandler;
+import com.example.vertx.verticle.web.auth.*;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -26,9 +23,9 @@ public class WebServerVerticle extends WrappedAbstractVerticle
 	protected Router router;
 	protected JadeTemplateEngine jade_template_engine;
 	protected StaticHandler static_handler;
-	protected AuthProvider auth_provider;
+	protected AuthProvider form_auth_provider;
+	protected AuthProvider totp_auth_provider;
 	protected SessionHandler session_handler;
-	protected FormLoginHandler form_login_handler;
 	
 	@Override
 	protected void onStarted(Handler<AsyncResult<Void>> handler)
@@ -62,14 +59,15 @@ public class WebServerVerticle extends WrappedAbstractVerticle
 	
 	protected void initAuthProvider(Handler<AsyncResult<Void>> handler)
 	{
-		this.auth_provider = new AdminFormLoginAuthProvider(WebServerVerticle.this);
+		this.form_auth_provider = new AdminFormLoginAuthProvider(WebServerVerticle.this);
+		this.totp_auth_provider = new AdminGoogleTOTPAuthProvider(WebServerVerticle.this);
 		handler.handle(Future.succeededFuture());
 	}
 	
 	protected void initSessionHandler(Handler<AsyncResult<Void>> handler)
 	{
 		this.session_handler = SessionHandler.create(LocalSessionStore.create(this.vertx))
-											 .setAuthProvider(this.auth_provider)
+											 .setAuthProvider(this.form_auth_provider)
 											 .setSessionTimeout(LauncherConfig.Web.getSessionTimeout());
 		handler.handle(Future.succeededFuture());
 	}
@@ -81,29 +79,17 @@ public class WebServerVerticle extends WrappedAbstractVerticle
 			this.router.route().handler(CookieHandler.create());
 			this.router.route().handler(BodyHandler.create());
 			this.router.route().handler(this.session_handler);
-			this.router.route("/api/login/idpw").handler(new AdminFormLoginHandler(WebServerVerticle.this, this.auth_provider));
+			this.router.route("/api/login/idpw").handler(new AdminFormLoginHandler(WebServerVerticle.this, this.form_auth_provider));
+			this.router.route("/api/login/idpw/totp").handler(new AdminGoogleTOTPLoginHandler(WebServerVerticle.this, this.totp_auth_provider));
+			this.router.route("/api/login/idpw/totp/regist").handler(new AdminGoogleTOTPAuthenticator.HandleRegist());
 			this.router.route("/api/login/azuread").handler(new AdminAzureADLoginHandler(WebServerVerticle.this));
 			this.router.route("/api/login/azuread/callback").handler(new AdminAzureADLoginCallbackHandler(WebServerVerticle.this));
 			this.router.route("/api/logout").handler(new HandleLogout());
-//			this.router.route().handler(ctx -> {
-//				this.session_handler.handle(ctx);
-//				User user = ctx.user();
-//				if (null == user) {
-//					System.out.println("user is null");
-//				} else {
-//					JsonObject principal = ctx.user().principal();
-//					if (null != principal) {
-//						System.out.println("principal : " + principal.encodePrettily());
-//					} else {
-//						System.out.println("principal is null");
-//					}
-//				}
-//			});
 			this.router.route("/admin/login").handler(new HandleJadePage());
-			this.router.route("/admin/*").handler(RedirectAuthHandler.create(this.auth_provider, "/admin/login", "return_url"));
+			this.router.route("/admin/*").handler(RedirectAuthHandler.create(this.form_auth_provider, "/admin/login", "return_url"));
 			this.router.route("/admin/*").handler(new HandleJadePage());
 			this.router.route().handler(this.static_handler);
-			
+
 			HttpServerOptions options = new HttpServerOptions()
 				.setPort(LauncherConfig.Web.getWebPort())
 				.setLogActivity(LauncherConfig.Web.getWebLogActivity());
@@ -152,6 +138,10 @@ public class WebServerVerticle extends WrappedAbstractVerticle
 					Logger.logError(WebServerVerticle.this, "jade template engine render failed", ar.cause());
 					ctx.fail(ar.cause());
 				} else {
+					User user = ctx.user();
+					ctx.put("test", "test");
+					if (null != user && null != user.principal())
+						ctx.put("principal", user.principal());
 					ctx.response().putHeader("content-type", "text/html");
 					ctx.response().putHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0");
 					ctx.response().putHeader("Pragma", "no-cache");

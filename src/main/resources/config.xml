@@ -10,4 +10,8 @@
     <auzureADClientKey>PAe8Q~N85DJ7r~uqr6_zDDZS~FzbRGvBg47z3da~</auzureADClientKey>
     <auzureADClientSecret>4bda15bb-d366-4d73-a1d4-3f7c83605c3a</auzureADClientSecret>
     <auzureADLoginRedirectURL>http://localhost:8080/api/login/azuread/callback</auzureADLoginRedirectURL>
+    <TOTPT0>0</TOTPT0>
+    <TOTPX>30</TOTPX>
+    <TOTPTimeStep>30000</TOTPTimeStep>
+    <TOTPMovingFactorOffset>1</TOTPMovingFactorOffset>
 </web>
